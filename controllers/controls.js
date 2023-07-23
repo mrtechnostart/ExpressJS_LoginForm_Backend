@@ -61,12 +61,24 @@ const deleteTask = async(req, res) => {
       res.status(500).json({error})
     }
   };
-
+const getTaskById = async (req,res) =>{
+    try {
+        const { id:ID } = req.params; 
+        const task = await Itech.findOne({ _id:ID }); 
+        if (!task) {
+            return res.status(200).json({ status:false });
+        }
+        res.status(200).json({ ...task,status:true });
+    } catch (e) {
+        res.status(500).json({ e });
+    }
+}
 
 module.exports = {
     getData,
     postData,
     getTask,
     deleteTask,
-    updateTask
+    updateTask,
+    getTaskById
 }
