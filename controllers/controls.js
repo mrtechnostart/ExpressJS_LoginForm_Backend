@@ -31,10 +31,42 @@ const getTask = async (req, res) => {
         res.status(500).json({ e });
     }
 };
+const deleteTask = async(req, res) => {
+    try{
+      const {id:TaskId} = req.params;
+      const task = await Itech.findByIdAndDelete({_id:TaskId})
+      if(!task){
+        return res.status(201).json({status: "failed",value:"Not Found"})
+      }
+      res.status(201).json({status: "success",value:[task]})
+    }
+    catch(e){
+      res.status(404).json(e)
+    }
+  };
+
+  const updateTask = async(req, res) => {
+    try{
+      const {id:TaskId} = req.params
+      const task = await Itech.findOneAndUpdate({_id:TaskId},req.body,{
+        new:true,
+        runValidators:true
+      } )
+      if(!task){
+          return res.status(404).json({status: "failed",value:"Not Found"})
+      }
+      res.json(task)
+    }
+    catch(error){
+      res.status(500).json({error})
+    }
+  };
 
 
 module.exports = {
     getData,
     postData,
-    getTask
+    getTask,
+    deleteTask,
+    updateTask
 }
