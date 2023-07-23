@@ -21,12 +21,12 @@ const getData = async(req,res)=>{
 }
 const getTask = async (req, res) => {
     try {
-        const { id: emailID } = req.params; // Corrected variable name to emailID
-        const task = await Itech.findOne({ email: emailID }); // Corrected variable name to emailID
+        const { id: emailID } = req.params; 
+        const task = await Itech.findOne({ email: emailID }); 
         if (!task) {
-            return res.status(200).json({ msg: `No Such Account Exist With EmailID ${emailID}` });
+            return res.status(200).json({ status:false });
         }
-        res.status(200).json({ task });
+        res.status(200).json({ ...task,status:true });
     } catch (e) {
         res.status(500).json({ e });
     }
