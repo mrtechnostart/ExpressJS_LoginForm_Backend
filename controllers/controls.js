@@ -1,90 +1,3 @@
-// const Itech = require("../models/model")
-
-// const postData = async (req,res)=>{
-//     try {
-//         const data = req.body
-//         const task = await Itech.create(data)
-//         res.status(201).json(task)
-//     } catch (error) {
-//         res.status(500).json({"error":error})
-//     }
-// }
-
-// const getData = async(req,res)=>{
-//     try{ 
-//         const tasks = await Itech.find({})
-//         res.status(200).json({tasks})
-//     }
-//     catch(e){
-//         res.status(500).json({e})
-//     }
-// }
-// const getTask = async (req, res) => {
-//     try {
-//         const { id: emailID } = req.params; 
-//         const task = await Itech.findOne({ email: emailID }); 
-//         if (!task) {
-//             return res.status(200).json({ status:false });
-//         }
-//         res.status(200).json({ ...task,status:true });
-//     } catch (e) {
-//         res.status(500).json({ e });
-//     }
-// };
-// const deleteTask = async(req, res) => {
-//     try{
-//       const {id:TaskId} = req.params;
-//       const task = await Itech.findByIdAndDelete({_id:TaskId})
-//       if(!task){
-//         return res.status(201).json({status: "failed",value:"Not Found"})
-//       }
-//       res.status(201).json({status: "success",value:[task]})
-//     }
-//     catch(e){
-//       res.status(404).json(e)
-//     }
-//   };
-
-//   const updateTask = async(req, res) => {
-//     try{
-//       const {id:TaskId} = req.params
-//       const task = await Itech.findOneAndUpdate({_id:TaskId},req.body,{
-//         new:true,
-//         runValidators:true
-//       } )
-//       if(!task){
-//           return res.status(404).json({status: "failed",value:"Not Found"})
-//       }
-//       res.json(task)
-//     }
-//     catch(error){
-//       res.status(500).json({error})
-//     }
-//   };
-// const getTaskById = async (req,res) =>{
-//     try {
-//         const { id:ID } = req.params; 
-//         const task = await Itech.findOne({ _id:ID }); 
-//         if (!task) {
-//             return res.status(200).json({ status:false });
-//         }
-//         res.status(200).json({ ...task,status:true });
-//     } catch (e) {
-//         res.status(500).json({ e });
-//     }
-// }
-
-// module.exports = {
-//     getData,
-//     postData,
-//     getTask,
-//     deleteTask,
-//     updateTask,
-//     getTaskById
-// }
-
-
-
 const pool = require("../models/model");
 
 const postData = async (req, res) => {
@@ -123,7 +36,7 @@ const getTask = async (req, res) => {
     if (results.length === 0) {
       return res.status(200).json({ status: false });
     }
-    res.status(200).json({ ...results[0], status: true });
+    res.status(200).json({ ...results, status: true });
   } catch (e) {
     res.status(500).json({ e });
   }
@@ -133,7 +46,7 @@ const deleteTask = async (req, res) => {
   try {
     const { id: TaskId } = req.params;
     const connection = await pool.getConnection();
-    const [results] = await connection.query("DELETE FROM itech WHERE _id = ?", [TaskId]);
+    const [results] = await connection.query("DELETE FROM itech WHERE id = ?", [TaskId]);
     connection.release();
 
     if (results.affectedRows === 0) {
@@ -150,13 +63,13 @@ const updateTask = async (req, res) => {
     const { id: TaskId } = req.params;
     const data = req.body;
     const connection = await pool.getConnection();
-    const [results] = await connection.query("UPDATE itech SET ? WHERE _id = ?", [data, TaskId]);
+    const [results] = await connection.query("UPDATE itech SET ? WHERE id = ?", [data, TaskId]);
     connection.release();
 
     if (results.affectedRows === 0) {
       return res.status(404).json({ status: "failed", value: "Not Found" });
     }
-    res.json({ ...data, _id: TaskId });
+    res.json({ ...data, id: TaskId });
   } catch (error) {
     res.status(500).json({ error });
   }
@@ -166,13 +79,13 @@ const getTaskById = async (req, res) => {
   try {
     const { id: ID } = req.params;
     const connection = await pool.getConnection();
-    const [results] = await connection.query("SELECT * FROM itech WHERE _id = ?", [ID]);
+    const [results] = await connection.query("SELECT * FROM itech WHERE id = ?", [ID]);
     connection.release();
 
     if (results.length === 0) {
       return res.status(200).json({ status: false });
     }
-    res.status(200).json({ ...results[0], status: true });
+    res.status(200).json({ ...results, status: true });
   } catch (e) {
     res.status(500).json({ e });
   }
